@@ -148,10 +148,15 @@ void handle_process_loop (TCPRequestChannel* channel) {
 int main (int argc, char* argv[]) {
 	buffercapacity = MAX_MESSAGE;
 	int opt;
-	while ((opt = getopt(argc, argv, "m:")) != -1) {
+	// add r option with a var to collect value
+	std::string r = "8080";
+	while ((opt = getopt(argc, argv, "m:r:")) != -1) {
 		switch (opt) {
 			case 'm':
 				buffercapacity = atoi(optarg);
+				break;
+			case 'r':
+				r = optarg;
 				break;
 		}
 	}
@@ -164,9 +169,16 @@ int main (int argc, char* argv[]) {
 	// FIXME: open socket with address="" and r from CLI
 	//		  then enter infinite loop calling TCPReqChan::accept_conn() and 2nd TCP constructor
 	//		  dispatching handle_process_loop thread for new channel
-	TCPRequestChannel* control_channel = nullptr;
+	TCPRequestChannel* control_channel = new TCPRequestChannel("",r);
+	
 	while (true) {
-
+		int client_sockfd = control_channel->accept_conn();
+		//accept_conn() returns socket file desc for client connection
+		// use 2nd TCP constructor, to create new channel for connection
+		TCPRequestChannel* client_channel = new TCPRequestChannel(client_sockfd);
+		// dispatch handle_process_loop, create thread, detach thread
+		thread thread_for_client(handle_process_loop, client_channel);
+		thread_for_client.detach();
 	}
 
 	cout << "Server terminated unexpectedly" << endl;
