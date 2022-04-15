@@ -28,7 +28,7 @@ TCPRequestChannel::TCPRequestChannel (const std::string _ip_address, const std::
         int port = stoi(_port_no);
         serv_addr.sin_port = htons(port);
         serv_addr.sin_addr.s_addr = INADDR_ANY;
-        //memset(&serv_addr.sin_zero, 0, sizeof(serv_addr.sin_zero));
+        memset(&serv_addr.sin_zero, 0, sizeof(serv_addr.sin_zero));
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
             perror("server:socket");
@@ -57,7 +57,7 @@ TCPRequestChannel::TCPRequestChannel (const std::string _ip_address, const std::
         client_addr.sin_family = AF_INET;
         int port = stoi(_port_no);
         client_addr.sin_port = htons(port);
-        //memset(&client_addr.sin_zero, 0, sizeof(client_addr.sin_zero));
+        memset(&client_addr.sin_zero, 0, sizeof(client_addr.sin_zero));
         inet_pton(AF_INET, _ip_address.c_str(), &(client_addr.sin_addr));
         
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
