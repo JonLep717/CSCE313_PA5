@@ -88,6 +88,9 @@ void file_thread_function (string filename, __int64_t filesize, BoundedBuffer* r
 	while (transfers <= num_trans) {
 		if (transfers == num_trans) {
 			buffercap = filesize - offset;
+            if (buffercap == 0) {
+                break;
+            }
 		}
 		filemsg trans_filemsg = filemsg(offset, buffercap);
         memcpy(buffer, &trans_filemsg, sizeof(filemsg));
@@ -211,10 +214,12 @@ int main (int argc, char* argv[]) {
 	}
     
 	// fork and exec the server
+    /*
     int pid = fork();
     if (pid == 0) {
         execl("./server", "./server", "-m", (char*) to_string(m).c_str(), nullptr);
     }
+    */
     
 	// initialize overhead (including the control channel)
     //TCPRequestChannel* chan = new TCPRequestChannel("control", TCPRequestChannel::CLIENT_SIDE);     // GOTTA CHANGE THIS
@@ -333,6 +338,8 @@ int main (int argc, char* argv[]) {
     delete request_buffer;
     delete response_buffer;
 
+    /*
 	// wait for server to exit
 	wait(nullptr);
+    */
 }

@@ -170,10 +170,9 @@ int main (int argc, char* argv[]) {
 	//		  then enter infinite loop calling TCPReqChan::accept_conn() and 2nd TCP constructor
 	//		  dispatching handle_process_loop thread for new channel
 	TCPRequestChannel* control_channel = new TCPRequestChannel("",r);
-	
 	while (true) {
-		int client_sockfd = control_channel->accept_conn();
 		//accept_conn() returns socket file desc for client connection
+		int client_sockfd = control_channel->accept_conn();
 		// use 2nd TCP constructor, to create new channel for connection
 		TCPRequestChannel* client_channel = new TCPRequestChannel(client_sockfd);
 		// dispatch handle_process_loop, create thread, detach thread

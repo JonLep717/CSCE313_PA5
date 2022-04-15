@@ -22,17 +22,20 @@ TCPRequestChannel::TCPRequestChannel (const std::string _ip_address, const std::
 
     if (_ip_address == "") {
         struct sockaddr_in serv_addr;
+        memset(&serv_addr, 0, sizeof(serv_addr));
         serv_addr.sin_family = AF_INET;
 
-        unsigned long int port = stoul(_port_no, nullptr, 0);
-        serv_addr.sin_port = htons((unsigned short int) port);
+        int port = stoi(_port_no);
+        serv_addr.sin_port = htons(port);
         serv_addr.sin_addr.s_addr = INADDR_ANY;
-        memset(&serv_addr.sin_zero, 0, sizeof(serv_addr.sin_zero));
+        //memset(&serv_addr.sin_zero, 0, sizeof(serv_addr.sin_zero));
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
             perror("server:socket");
             exit(EXIT_FAILURE);
         }
+        //bind(sockfd, (const struct sockaddr *)&serv_addr, sizeof(serv_addr));
+        
         if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
             perror("server:bind");
             exit(EXIT_FAILURE);
@@ -45,10 +48,11 @@ TCPRequestChannel::TCPRequestChannel (const std::string _ip_address, const std::
 
     else {
         struct sockaddr_in client_addr;
+        memset(&client_addr,0,sizeof(client_addr));
         client_addr.sin_family = AF_INET;
-        unsigned long int port = stoul(_port_no, nullptr, 0);
-        client_addr.sin_port = htons((unsigned short int) port);
-        memset(&client_addr.sin_zero, 0, sizeof(client_addr.sin_zero));
+        int port = stoi(_port_no);
+        client_addr.sin_port = htons(port);
+        //memset(&client_addr.sin_zero, 0, sizeof(client_addr.sin_zero));
         inet_pton(AF_INET, _ip_address.c_str(), &(client_addr.sin_addr));
         
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -57,7 +61,7 @@ TCPRequestChannel::TCPRequestChannel (const std::string _ip_address, const std::
             exit(EXIT_FAILURE);
         }
         
-        if (connect(sockfd, (const sockaddr *)&client_addr, sizeof(client_addr)) < 0) {
+        if (connect(sockfd, (const struct sockaddr *)&client_addr, sizeof(client_addr)) < 0) {
             perror("client:connect");
             exit(EXIT_FAILURE);
         }
