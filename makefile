@@ -3,7 +3,7 @@ CXXFLAGS=-std=c++17 -g -pedantic -Wall -Wextra -fsanitize=address,undefined -fno
 LDLIBS=
 
 # 0 for output in autograder, 1 for no output in autograder
-OUT=1
+OUT=0
 
 
 SRCS=server.cpp client.cpp
