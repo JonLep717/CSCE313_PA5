@@ -1,0 +1,31 @@
+name: GitHub Classroom Workflow
+
+on: [push]
+
+jobs:
+  build:
+    name: Autograding
+    runs-on: self-hosted
+    steps:
+      - name: Check-in Student Repo
+        uses: actions/checkout@v2
+      
+      - name: Check-in Clean Test Collateral
+        uses: actions/checkout@v2
+        with:
+          repository: CSCE313-SP22-Tyagi/public-tests
+          path: tests
+      
+      - name: Set-up Autograder Environment
+        run: |
+          mkdir .github/classroom/
+          if [ $(make -s print-var) -eq 0 ]; then
+            cp tests/graders/out5.json .github/classroom/autograding.json
+          else
+            cp tests/graders/grading5.json .github/classroom/autograding.json
+          fi;
+          cp tests/collateral/pa5-tests/* test-files/
+          cp tests/makefiles/makefile5 makefile
+
+      - name: Run Autograder
+        uses: education/autograding@v1
