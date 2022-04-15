@@ -34,8 +34,13 @@ TCPRequestChannel::TCPRequestChannel (const std::string _ip_address, const std::
             perror("server:socket");
             exit(EXIT_FAILURE);
         }
-        //bind(sockfd, (const struct sockaddr *)&serv_addr, sizeof(serv_addr));
-        
+        // forcibly re-bind port in the server
+        int flag = 1;
+        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int)) < 0) {
+            perror("setsockopt failed");
+            exit(EXIT_FAILURE);
+        }
+
         if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
             perror("server:bind");
             exit(EXIT_FAILURE);
